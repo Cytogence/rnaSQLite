@@ -27,7 +27,7 @@ print "+ successfully connected to db\n";
 
 # initialise DB by creating table if it doesn't exist
 my $stmt = qq(CREATE TABLE IF NOT EXISTS reference_table(
-	id INT PRIMARY KEY NOT NULL,
+	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 	accession_id CHAR(16) NOT NULL,
 	gene_symbol CHAR(16) NOT NULL,
 	gene_name CHAR(64) NOT NULL,
