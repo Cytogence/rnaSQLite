@@ -44,11 +44,28 @@ my $dbh = DBI->connect($dsn, $user, $password, {RaiseError => 1}) or die $DBI::e
 
 print "+ successfully connected to db\n";
 
+# get MOUSE specied id #
+my $sth = $dbh->prepare('SELECT id FROM species_table WHERE short_name = ?');
+my $r = $sth->execute('MOUSE');
+if ($r < 0) {
+	die $DBI::errstr;
+}
+
+my $row = $sth->fetch();
+if ($row == 0) {
+	die "Unable to find specied ID for short name MOUSE\n";
+}
+
+my $species_id = $row->[0];
+
+print "* Setting species to MOUSE ($species_id)\n";
+$sth->finish();
+
 # read MGI MRK_list2 file
 # first slurp to an array for performance, neatly demonstrated by:
 # https://stackoverflow.com/questions/14393295/best-way-to-skip-a-header-when-reading-in-from-a-text-file-in-perl
 
-open(my $mrk_fh, $mrk_list);
+open(my $mrk_fh, $mrk_list) or die "Unable to open $mrk_list\n";;
 my @mrk_array = <$mrk_fh>;
 close($mrk_fh);
 
@@ -78,7 +95,7 @@ foreach my $marker (@mrk_array) {
 # next, read the PANTHER SequenceAssociationPathway file,
 # then match the MGI Accession and store in the DB
 
-open(my $sap_fh, $sap_file);
+open(my $sap_fh, $sap_file) or die "Unable to open $sap_file\n";
 my @sap_array = <$sap_fh>;
 close($sap_fh);
 
@@ -95,8 +112,8 @@ close($sap_fh);
 # 10: PANTHER subfamily name
 
 # purge database of any existing mouse entries
-my $stmt = qq(DELETE FROM reference_table WHERE species = 1;);
-my $r = $dbh->do($stmt);
+$sth = $dbh->prepare('DELETE FROM reference_table WHERE species = ?');
+$r = $sth->execute($species_id);
 if ($r < 0) {
 	die $DBI::errstr;
 } else {
@@ -126,8 +143,8 @@ foreach my $sap (@sap_array) {
 		}
 
 		# insert into table
-		my $sth = $dbh->prepare('INSERT INTO reference_table(accession_id, gene_symbol, gene_name, chromosome, species, pathway_accession, pathway_name, evidence_id, evidence_type, panther_subfamily_id, panther_subfamily_name) VALUES(?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)');
-		$r = $sth->execute($mgi_id, $symbol, $name, $chr, $columns[0], $columns[1], $columns[7], $columns[8], $columns[9], $columns[10]);
+		$sth = $dbh->prepare('INSERT INTO reference_table(accession_id, gene_symbol, gene_name, chromosome, species, pathway_accession, pathway_name, evidence_id, evidence_type, panther_subfamily_id, panther_subfamily_name) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+		$r = $sth->execute($mgi_id, $symbol, $name, $chr, $species_id, $columns[0], $columns[1], $columns[7], $columns[8], $columns[9], $columns[10]);
 		if ($r < 0) {
 			print $DBI::errstr;
 		} else {
