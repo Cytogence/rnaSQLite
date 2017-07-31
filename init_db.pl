@@ -19,9 +19,7 @@ if (not defined $file) {
 my $driver = "SQLite";
 my $database = $file;
 my $dsn = "DBI:$driver:$database";
-my $user = "";
-my $password = "";
-my $dbh = DBI->connect($dsn, $user, $password, {RaiseError => 1}) or die $DBI::errstr;
+my $dbh = DBI->connect($dsn, {RaiseError => 1}) or die $DBI::errstr;
 
 print "+ successfully connected to db\n";
 
@@ -98,7 +96,7 @@ if ($r < 0) {
 	print "+ successfully created reference_table\n";
 }
 
-# create table for samples_table
+# create table for sample_table
 $stmt = qq(CREATE TABLE IF NOT EXISTS sample_table(
 	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 	sample_name TEXT NOT NULL,
