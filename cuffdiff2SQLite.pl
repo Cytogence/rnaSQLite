@@ -27,9 +27,7 @@ if (not defined $species_code) {
 my $driver = "SQLite";
 my $database = $db_file;
 my $dsn = "DBI:$driver:$database";
-my $user = "";
-my $password = "";
-my $dbh = DBI->connect($dsn, $user, $password, {RaiseError => 1}) or die $DBI::errstr;
+my $dbh = DBI->connect($dsn, {RaiseError => 1}) or die $DBI::errstr;
 
 print "+ successfully connected to db\n";
 
