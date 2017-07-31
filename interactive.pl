@@ -19,8 +19,6 @@ if (not defined $file) {
 my $driver = "SQLite";
 my $database = $file;
 my $dsn = "DBI:$driver:$database";
-my $user = "";
-my $password = "";
 my $dbh = DBI->connect($dsn, {RaiseError => 1}) or die $DBI::errstr;
 
 print "+ successfully connected to db\n";
