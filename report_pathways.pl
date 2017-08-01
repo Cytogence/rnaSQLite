@@ -10,23 +10,42 @@ use DBI;
 use strict;
 use warnings;
 
-my ($file, $sample1, $sample2, $output) = @ARGV;
+my ($file, $sample1, $sample2, $output, $flag1, $option1, $flag2, $option2) = @ARGV;
 
 if (not defined $file) {
-	die "No database file specified.\n";
+	print "No database file specified.\n", Usage();
+	exit();
 }
 
 if (not defined $sample1) {
-	die "Sample 1 name not specified.\n";
+	print "Sample 1 name not specified.\n", Usage();
+	exit();
 }
 
 if (not defined $sample2) {
-	die "Sample 2 name not specified.\n";
+	print "Sample 2 name not specified.\n", Usage();
+	exit();
 }
 
 if (not defined $output) {
-	die "Output file name not provided.\n";
+	print "Output file name not provided.\n", Usage();
+	exit();
 }
+
+my $pval_limit = 0.05;
+my $read_limit = 1;
+
+# check for options
+if (defined $flag1 && defined $option1) {
+	$pval_limit = $option1 if ($flag1 =~ /-p/);
+	$read_limit = $option1 if ($flag1 =~ /-r/);
+}
+if (defined $flag2 && defined $option2) {
+	$pval_limit = $option2 if ($flag2 =~ /-p/);
+	$read_limit = $option2 if ($flag2 =~ /-r/);
+}
+
+print "* p-value cutoff set to $pval_limit\n", "* read cutoff set to $read_limit\n";
 
 my $driver = "SQLite";
 my $database = $file;
@@ -78,8 +97,8 @@ print "* found ", scalar(keys %sample2_data), " entries for $sample2\n";
 print "* retrieving reference data for species id $species_id\n";
 
 # get all the data from diff_table
-$sth = $dbh->prepare('SELECT * FROM diff_table WHERE p_value <= 0.05');
-$r = $sth->execute();
+$sth = $dbh->prepare('SELECT * FROM diff_table WHERE p_value <= ?');
+$r = $sth->execute($pval_limit);
 
 die $DBI::errstr if $r < 0;
 
@@ -110,6 +129,8 @@ foreach my $diff (keys %diff_data) {
 	my $sample1_reads = $sample1_data{$sample1_id}[5];
 	my $sample2_reads = $sample2_data{$sample2_id}[5];
 	my $gene_symbol = $sample1_data{$sample1_id}[3];
+
+	next if $sample1_reads < $read_limit && $sample2_reads < $read_limit;
 
 	my $sample1_v2_FC = 0;
 	$sample1_v2_FC = $sample1_reads / $sample2_reads if $sample2_reads != 0;
@@ -153,3 +174,7 @@ undef $sth;
 
 $dbh->disconnect();
 print "- disconnected from database\n";
+
+sub Usage {
+	return "Usage:\nreport_pathways.pl sqlite_db sample1_name sample2_name output_file_path [-p value_cutoff -r read_cutoff]\n\n-p\tp-value cutoff. A value that will be used as a cutoff for p-value.\n\tAnything above the specified value will not be included.\n-r\tRead value cutoff. A value that will be used as a cutoff for reads\n\tfor both samples being compared. A value less than the\n\tspecified value will be excluded if present in both samples.";
+}
