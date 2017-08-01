@@ -13,15 +13,18 @@ use warnings;
 my ($db_file, $diffout, $species_code) = @ARGV;
 
 if (not defined $db_file) {
-	die "SQLite database file must be specified.\n";
+	print "SQLite database file must be specified.\n", Usage();
+	exit();
 }
 
 if (not defined $diffout) {
-	die "Output file from cuffdiff must be specified.\n";
+	print "Output file from cuffdiff must be specified.\n", Usage();
+	exit();
 }
 
 if (not defined $species_code) {
-	die "Species short name must be specified, e.g. MOUSE, HUMAN, ECOLI, etc...\n";
+	print "Species short name must be specified, e.g. MOUSE, HUMAN, ECOLI, etc...\n", Usage();
+	exit();
 }
 
 my $driver = "SQLite";
@@ -140,3 +143,7 @@ foreach my $diff (@diff_array) {
 
 $dbh->disconnect();
 print "- disconnected from db\n";
+
+sub Usage {
+	return "Usage:\ncuffdiff2SQLite.pl sqlite_db cuffdiff_output species_short_name\n";
+}
