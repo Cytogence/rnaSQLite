@@ -24,15 +24,18 @@ use warnings;
 my ($db_file, $sap_file, $mrk_list) = @ARGV;
 
 if (not defined $db_file) {
-	die "SQLite database file must be specified.\n";
+	print "SQLite database file must be specified.\n", Usage();
+	exit();
 }
 
 if (not defined $sap_file) {
-        die "PANTHER's SequenceAssociationPathway file must be specified.\n";
+        print "PANTHER's SequenceAssociationPathway file must be specified.\n", Usage();
+	exit();
 }
 
 if (not defined $mrk_list) {
-	die "MGI's Mouse Genetic Markers list file (MRK_List2.rpt) must be specified.\n";
+	print "MGI's Mouse Genetic Markers list file (MRK_List2.rpt) must be specified.\n", Usage();
+	exit();
 }
 
 my $driver = "SQLite";
@@ -153,3 +156,6 @@ foreach my $sap (@sap_array) {
 
 $dbh->disconnect();
 
+sub Usage {
+	return "Usage:\ninit_mouse_ref.pl sqlite_db SequenceAssociationPathway3.5.txt MRK_List2.rpt\n";
+}
