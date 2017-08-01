@@ -13,7 +13,8 @@ use warnings;
 my ($file) = @ARGV;
 
 if (not defined $file) {
-        die "No database file specified.\n";
+        print "No database file specified.\n", Usage();
+	exit();
 }
 
 my $driver = "SQLite";
@@ -130,3 +131,7 @@ if ($r < 0) {
 
 $dbh->disconnect();
 print "- disconnected from db\n";
+
+sub Usage {
+	return "Usage:\ninit_db.pl sqlite_database_file\n";
+}
