@@ -101,7 +101,7 @@ print "* loaded ", scalar(keys %diff_data), " diff entries\n";
 open (my $fh, '>', $output) or die "Unable to open $output to write output.\n";
 
 # print header
-print $fh "gene\tsubfamily\tpathway\tlog2FC\t$sample1 reads\tlog2FC\t$sample2 reads\n";
+print $fh "gene\tsubfamily\tpathway\t$sample1 FC\t$sample1 reads\tlog2FC\t$sample2 FC\t$sample2 reads\n";
 
 foreach my $diff (keys %diff_data) {
 	my $sample1_id = $diff_data{$diff}[1];
@@ -110,6 +110,11 @@ foreach my $diff (keys %diff_data) {
 	my $sample1_reads = $sample1_data{$sample1_id}[5];
 	my $sample2_reads = $sample2_data{$sample2_id}[5];
 	my $gene_symbol = $sample1_data{$sample1_id}[3];
+
+	my $sample1_v2_FC = 0;
+	$sample1_v2_FC = $sample1_reads / $sample2_reads if $sample2_reads != 0;
+	my $sample2_v1_FC = 0;
+	$sample2_v1_FC = $sample2_reads / $sample1_reads if $sample1_reads != 0;
 
 	# get reference table data
 	$sth = $dbh->prepare('SELECT * FROM reference_table WHERE species = ? AND gene_symbol = ? order by gene_symbol,pathway_name');
@@ -125,15 +130,16 @@ foreach my $diff (keys %diff_data) {
 		# gene_symbol [2]
 		# panther_subfamily_name [11]
 		# pathway_name [7]
-		# sample 1 log2fc
+		# sample 1 fc
 		# sample 1 reads
-		# sample 2 log2fc
+		# log2fc
+		# sample 2 fc
 		# sample 2 reads
 
 		if ($log2fc < 0) {	
-			print $fh "$row[2]\t$row[11]\t$row[7]\t", $log2fc, "\t", $sample1_reads, "\t\t", $sample2_reads, "\n";
+			print $fh "$row[2]\t$row[11]\t$row[7]\t", $sample1_v2_FC, "\t", $sample1_reads, "\t", $log2fc, "\t\t", $sample2_reads, "\n";
 		} else {
-			print $fh "$row[2]\t$row[11]\t$row[7]\t\t", $sample1_reads, "\t", $log2fc, "\t", $sample2_reads, "\n";
+			print $fh "$row[2]\t$row[11]\t$row[7]\t\t", $sample1_reads, "\t", $log2fc, "\t", $sample2_v1_FC, "\t", $sample2_reads, "\n";
 		}
 
 		$last = $row[7];
