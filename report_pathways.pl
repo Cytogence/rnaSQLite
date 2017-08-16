@@ -143,10 +143,11 @@ foreach my $diff (keys %diff_data) {
 
 	die $DBI::errstr if $r < 0;
 
-	my $last = "none";
+	my $last_gene = "none";
+	my $last_path = "none";
 
 	while (my @row = $sth->fetchrow_array) {
-		next if $last eq $row[7];
+		next if $last_gene eq $row[2] && $last_path eq $row[7];
 
 		# gene_symbol [2]
 		# panther_subfamily_name [11]
@@ -163,7 +164,8 @@ foreach my $diff (keys %diff_data) {
 			print $fh "$row[2]\t$row[11]\t$row[7]\t\t", $sample1_reads, "\t", $log2fc, "\t", $sample2_v1_FC, "\t", $sample2_reads, "\n";
 		}
 
-		$last = $row[7];
+		$last_gene = $row[2];
+		$last_path = $row[7];
 	}
 }
 
