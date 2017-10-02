@@ -170,7 +170,7 @@ $stmt = qq(CREATE TABLE IF NOT EXISTS sample_table(
 
 **Code:**
 ```perl
-my $stmt = qq(CREATE TABLE IF NOT EXISTS species_table(
+$stmt = qq(CREATE TABLE IF NOT EXISTS species_table(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         short_name CHAR(8) NOT NULL,
         organism TEXT NOT NULL,
