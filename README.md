@@ -10,7 +10,7 @@ on RHEL/Centos systems you can install as follows:
 yum install perl-DBD-SQLite
 ```
 
-## Getting Started
+## Getting Started (the basics)
 1. Download the repo and unzip.
 ```bash
 unzip master.zip
@@ -59,6 +59,23 @@ For a p-value of less than 0.01 and FPKM cutoff of 10:
 ```bash
 ./report_pathways.pl my_rnaseq_data.db HEALTHY TREATMENT /path/to/output.txt -p 0.01 -r 10
 ```
+
+## Cytoscape and CPDB Induced Network Modules
+In this section we will use the gene list that you obtained from `report_pathways.pl` to obtain a network list from CPDB's induced network module.  CPDB, or ConsensusPathDB, is a network analysis tool that integrates many different pathway databases into one.  At the time of writing, CPDB supports human, yeast and mouse pathways (http://cpdb.molgen.mpg.de/).  Once a network list is obtained, we will use this tool to merge the network list with gene expression data, which we will then import into cytoscape for visualisation.  Download Cytoscape from http://www.cytoscape.org/.
+
+1. When using CPDB, the first thing is to select your species at the top of the website (http://cpdb.molgen.mpg.de/).  Then access the induced network modules by clicking on "gene set analysis" in the menu on the right.  You will see "induced network modules" show up.  Click it and you will be presented with a text field to past a list of genes.
+
+2. Open the output file from `report_pathways.pl` in a spreadsheet software to copy the list of gene symbols, or just extract the first colum from the text file using `awk` or similar methods.  Duplicate gene symbols may appear, as a single gene can be part of one or more pathways.  If you would like, you can remove duplicates, although they will not affect the induced network modules.
+
+3. Paste the list of genes into the text box on CPDB's induced network modules page and click "Proceed".
+
+4. Once the page loads you will see a visualisation of the network.  To download the network list as a text file, click on "export" at the top of the page.
+
+5. Use `cpdb2cytoscape.pl` to merge expression data which can then be visualised as colour changes in cytoscape.
+```bash
+./cpdb2cytoscape.pl my_rnaseq_data.db HEALTHY TREATMENT /path/to/CPDB_inducedModules /path/to/output.txt
+```
+You will then be able to import the resulting text file in to a new session in Cytoscape for visualisation.
 
 ## Database Schema
 The following is the table schemas and other details.
