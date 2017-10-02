@@ -86,7 +86,7 @@ $stmt = qq(CREATE TABLE IF NOT EXISTS diff_table(
         test_stat REAL NOT NULL,
         p_value REAL NOT NULL,
         q_value REAL NOT NULL););
-``
+```
 
 ### reference_table
 |Column Name           |Type    |Remarks                           |
