@@ -25,13 +25,17 @@ If your system does not have `unzip` you will need to install.  RHEL/Centos `yum
 Change `my_rnaseq_data.db` to whatever name that is more descriptive to your project or analysis you are going to do.
 
 3. Initialize the reference/annotation database.  This can be for either mouse or human (more species to come).
+
 Download the Seuqence Association file from PANTHER (ftp://ftp.pantherdb.org/pathway/current_release/SequenceAssociationPathway3.5.txt).
+
 Before use, please read their README (ftp://ftp.pantherdb.org/pathway/current_release/README) and LICENSE (ftp://ftp.pantherdb.org/pathway/current_release/LICENSE)
+
 ### For Mouse
 Download the mouse gene list file from JAX (http://www.informatics.jax.org/downloads/reports/MRK_List2.rpt) and run the following program
 ```bash
 ./init_mouse_ref.pl my_rnaseq_data.db SequenceAssociationPathway3.5.txt MRK_List2.rpt
 ```
+
 ### For Human
 Download the human gene list from HGNC (ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/locus_groups/protein-coding_gene.txt) and run the following program
 ```bash
