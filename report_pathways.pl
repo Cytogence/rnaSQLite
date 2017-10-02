@@ -178,5 +178,5 @@ $dbh->disconnect();
 print "- disconnected from database\n";
 
 sub Usage {
-	return "Usage:\nreport_pathways.pl sqlite_db sample1_name sample2_name output_file_path [-p value_cutoff -r read_cutoff]\n\n-p\tp-value cutoff. A value that will be used as a cutoff for p-value.\n\tAnything above the specified value will not be included.\n-r\tRead value cutoff. A value that will be used as a cutoff for reads\n\tfor both samples being compared. A value less than the\n\tspecified value will be excluded if present in both samples.";
+	return "Usage:\nreport_pathways.pl sqlite_db sample1_name sample2_name output_file_path [-p value_cutoff -r read_cutoff]\n\n-p\tp-value cutoff. A value that will be used as a cutoff for p-value.\n\tAnything above the specified value will not be included.\n-r\tRead value cutoff. A value that will be used as a cutoff for reads\n\tfor both samples being compared. A value less than the\n\tspecified value will be excluded if present in both samples.\n\n";
 }
